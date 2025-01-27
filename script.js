@@ -226,6 +226,38 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+        const navMenu = document.querySelector('.nav-menu');
+        const menuToggle = document.querySelector('.menu-toggle');
+        
+        if (!navMenu.contains(e.target) && !menuToggle.contains(e.target)) {
+            navMenu.classList.remove('active');
+            menuToggle.classList.remove('active');
+        }
+    });
+
+    // Prevent scroll when menu is open
+    const menuToggle = document.querySelector('.menu-toggle');
+    menuToggle.addEventListener('click', () => {
+        document.body.style.overflow = 
+            document.body.style.overflow === 'hidden' ? '' : 'hidden';
+        menuToggle.classList.toggle('active');
+    });
+
+    // Handle touch events for interactive elements
+    const interactiveElements = document.querySelectorAll('.product-card, .fact-bubble, .gallery-item');
+    
+    interactiveElements.forEach(element => {
+        element.addEventListener('touchstart', () => {
+            element.classList.add('touch-active');
+        });
+        
+        element.addEventListener('touchend', () => {
+            element.classList.remove('touch-active');
+        });
+    });
 });
 
 function createChocolateRain() {
@@ -320,4 +352,13 @@ window.addEventListener('scroll', () => {
 
 document.querySelector('.back-to-top-btn').addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-}); 
+});
+
+// Fix for iOS Safari 100vh issue
+function fixMobileHeight() {
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+
+window.addEventListener('resize', fixMobileHeight);
+fixMobileHeight(); 
