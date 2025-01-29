@@ -361,4 +361,86 @@ function fixMobileHeight() {
 }
 
 window.addEventListener('resize', fixMobileHeight);
-fixMobileHeight(); 
+fixMobileHeight();
+
+// Add responsive header sizing
+function adjustHeaderSize() {
+    if (window.innerWidth <= 768) {
+        const header = document.querySelector('.header');
+        const elements = header.querySelectorAll('*');
+        
+        elements.forEach(el => {
+            el.style.margin = '5px 0';
+            if (el.tagName === 'H1') {
+                el.style.fontSize = '14px';
+            }
+        });
+    }
+}
+
+window.addEventListener('load', adjustHeaderSize);
+window.addEventListener('resize', adjustHeaderSize);
+
+function setupMobileHeader() {
+    const header = document.querySelector('.header');
+    if (window.innerWidth <= 768) {
+        header.classList.add('mobile-header');
+    } else {
+        header.classList.remove('mobile-header');
+    }
+}
+
+// Call on load and resize
+window.addEventListener('load', setupMobileHeader);
+window.addEventListener('resize', setupMobileHeader);
+
+// Easter Egg Handler
+document.addEventListener('DOMContentLoaded', function() {
+    const brandLogo = document.querySelector('.brand-logo');
+    let clickCount = 0;
+    let lastClick = 0;
+
+    if (brandLogo) {
+        brandLogo.addEventListener('click', function() {
+            const currentTime = new Date().getTime();
+            
+            if (currentTime - lastClick < 500) { // 500ms between clicks
+                clickCount++;
+                
+                if (clickCount === 3) {
+                    // Trigger easter egg
+                    brandLogo.classList.add('clicked');
+                    createTreatsExplosion(brandLogo);
+                    clickCount = 0;
+                }
+            } else {
+                clickCount = 1;
+            }
+            
+            lastClick = currentTime;
+        });
+    }
+
+    function createTreatsExplosion(element) {
+        const treats = ['🍫', '🍪', '🧁', '🍰'];
+        const rect = element.getBoundingClientRect();
+        
+        for (let i = 0; i < 15; i++) {
+            const treat = document.createElement('div');
+            treat.className = 'treat-particle';
+            treat.textContent = treats[Math.floor(Math.random() * treats.length)];
+            treat.style.position = 'fixed';
+            treat.style.left = rect.left + rect.width/2 + 'px';
+            treat.style.top = rect.top + rect.height/2 + 'px';
+            treat.style.setProperty('--angle', (i * 24) + 'deg');
+            document.body.appendChild(treat);
+            
+            setTimeout(() => treat.remove(), 1000);
+        }
+
+        // Remove animation class after completion
+        setTimeout(() => {
+            brandLogo.classList.remove('clicked');
+        }, 800);
+    }
+});
